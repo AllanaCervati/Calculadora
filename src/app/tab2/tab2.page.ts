@@ -1,8 +1,7 @@
+import { AlertController } from '@ionic/angular';
+import { IMemoria } from './../models/IMemoria.model';
 import { Component } from '@angular/core';
 import { evaluate } from 'mathjs';
-import { IMemoria } from '../models/IMemoria.models';
-import { AlertController } from '@ionic/angular';
-import { ChildActivationStart } from '@angular/router';
 
 @Component({
   selector: 'app-tab2',
@@ -21,39 +20,27 @@ export class Tab2Page {
 
   constructor(private alertController: AlertController) {}
 
-  async presentAlert(titulo: string, mensagem: string) {
-    const alert = await this.alertController.create({
-      header: titulo,
-      message: mensagem,
-      buttons: ['OK'],
-    });
-
-    await alert.present();
-  }
-
-  adicionarMemoria(){
-    if(this.operacao != ''&& this.resultado != ''){
-      const memoria:IMemoria = {
+  adicionarMemoria() {
+    if (this.operacao !== '' && this.resultado !== '') {
+      const memoria: IMemoria = {
         operacao: this.operacao,
         resultado: Number(this.resultado),
       };
 
       this.memoria.push(memoria);
-
-    }else if(this.operacao != '' && this.operacao == ''){
+    } else if (this.operacao !== '' && this.resultado === '') {
       this.calcularResultado();
-
-      const memoria:IMemoria = {
+      const memoria: IMemoria = {
         operacao: this.operacao,
         resultado: Number(this.resultado),
       };
 
       this.memoria.push(memoria);
+    } else {
+      this.presentAlert('Erro', 'Não tem nada para salvar!');
+    }
 
-    }else{ 
-
-    this.presentAlert('Aviso!', 'Nada para salvar!');
-
+    console.log(this.memoria);
   }
 
   adicionarValor(valor: string) {
@@ -91,6 +78,7 @@ export class Tab2Page {
     this.resultado = '';
     this.operacao = '';
     //this.numero = false;
+    this.memoria = [];
   }
 
   apagarCaracter() {
@@ -99,13 +87,27 @@ export class Tab2Page {
     }
   }
 
-  
-
   calcularResultado() {
-    try{
-    this.resultado = evaluate(this.operacao);
-    }catch(err){
+    try {
+      this.resultado = evaluate(this.operacao);
+    } catch (err) {
       this.resultado = 'Inválido!';
     }
+  }
+
+  mostrarMemoria() {}
+
+  somarMemoria() {}
+
+  subtrairMemoria() {}
+
+  async presentAlert(titulo: string, mensagem: string) {
+    const alert = await this.alertController.create({
+      header: titulo,
+      message: mensagem,
+      buttons: ['OK'],
+    });
+
+    alert.present();
   }
 }
